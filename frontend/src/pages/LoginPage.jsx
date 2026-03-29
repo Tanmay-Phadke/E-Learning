@@ -17,9 +17,28 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      const data = await login(email, password);
       toast.success('Login Successful');
-      navigate('/dashboard');
+      if (data.isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    setEmail('admin@test.com');
+    setPassword('123456');
+    // We can either just pre-fill or actually submit. 
+    // Usually pre-filling is better for visibility.
+    // Or we just call login directly for a quick demo button.
+    try {
+      const data = await login('admin@test.com', '123456');
+      toast.success('Admin Login Successful');
+      navigate('/admin');
     } catch (err) {
       toast.error(err);
     }
@@ -48,6 +67,17 @@ const LoginPage = () => {
             {loading ? <Loader2 className="animate-spin h-5 w-5" /> : <><LogIn className="h-5 w-5" /><span>Login</span></>}
           </button>
         </form>
+
+        <div className="mt-4">
+          <button 
+            type="button"
+            onClick={handleAdminLogin}
+            className="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white py-2 rounded-lg font-medium transition-colors text-sm border border-gray-200 dark:border-gray-600"
+          >
+            Login as Admin (Demo)
+          </button>
+        </div>
+
         <p className="mt-6 text-center text-gray-600 dark:text-gray-400">Don't have an account? <Link to="/register" className="text-blue-600 hover:underline font-medium">Create Account</Link></p>
       </div>
     </div>
